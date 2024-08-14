@@ -1,7 +1,7 @@
 *PROBLEM SET 1
 
 clear
-global main "/Users/juanimorozumi/Downloads/PS1"
+global main "/Users/juanimorozumi/Documents/GitHub/Aplicada/Trabajo práctico 1/PS1"
 global input "$main/input"
 global output "$main/output"
 
@@ -129,33 +129,6 @@ replace age = monage/12
 
 estpost summarize sex_limpia age satlif waistc hipsiz2 totexpr2 , listwise
 
-             |  e(count)   e(sum_w)    e(mean) 
--------------+---------------------------------
-  sex_limpia |      1003       1003   .5643071 
-         age |      1003       1003   48.23703 
-      satlif |      1003       1003   2.443669 
-      waistc |      1003       1003   85.74686 
-     hipsiz2 |      1003       1003   100.9367 
-    totexpr2 |      1003       1003   5263.737 
-
-             |    e(Var)      e(sd)     e(min) 
--------------+---------------------------------
-  sex_limpia |    .24611   .4960947          0 
-         age |  329.0045   18.13848   18.23333 
-      satlif |  1.259049   1.122074          1 
-      waistc |  188.8681   13.74293         37 
-     hipsiz2 |  138.6673   11.77571         40 
-    totexpr2 |  1.86e+07   4313.406     147.83 
-
-             |    e(max)     e(sum) 
--------------+----------------------
-  sex_limpia |         1        566 
-         age |  100.5833   48381.74 
-      satlif |         5       2451 
-      waistc |       168    86004.1 
-     hipsiz2 |       180   101239.5 
-    totexpr2 |   37727.6    5279528
-
 *Cambiamos las etiquetas de las variables
 label var sex_limpia "Sexo"
 label var age "Edad (en años)"
@@ -166,7 +139,7 @@ label var totexpr2 "Gasto real"
 
 
 * Exportamos la tabla
-esttab using "$output/tables/Table 1.tex", cells("Obs. Mean Var Sd Min Max Sum")
+esttab using "$output/tables/Table 1.tex", cells("Obs Mean Var Sd Min Max Sum")
 
 *6)
 *Definimos el estilo para el gráfico
@@ -183,26 +156,11 @@ esttab using "$output/tables/Table 1.tex", cells("Obs. Mean Var Sd Min Max Sum")
 *Comparamos las distribuciones de la circunferencia de las caderas de hombres y mujeres.
 twoway (kdensity hipsiz if sex_limpia==1) (kdensity hipsiz if sex_limpia==0), legend(order(1 "Women" 2 "Men")) title("Distribución de la circunferencia de las caderas") ytitle("Densidad") xtitle("Circunferencia de las caderas")
 
-graph save "Graph" "C:\Users\Usuario\Desktop\Eco Aplicada\PS1\output\grapichs\Gráfico punto 6.gph"
+graph save "Graph" "/Users/juanimorozumi/Documents/GitHub/Aplicada/Trabajo práctico 1/PS1\output\grapichs\Gráfico punto 6.gph"
 
-*6.b) ttest hipsiz, by(sex_limpia)
+*6.b)
+ttest hipsiz, by(sex_limpia)
 
-Two-sample t test with equal variances
-------------------------------------------------------------------------------
-   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
----------+--------------------------------------------------------------------
-       0 |   1,160    97.67957     .294948    10.04557    97.10088    98.25826
-       1 |   1,637    102.9928    .3139317    12.70163     102.377    103.6085
----------+--------------------------------------------------------------------
-combined |   2,797    100.7892    .2261775    11.96177    100.3457    101.2327
----------+--------------------------------------------------------------------
-    diff |           -5.313223    .4480286               -6.191723   -4.434722
-------------------------------------------------------------------------------
-    diff = mean(0) - mean(1)                                      t = -11.8591
-Ho: diff = 0                                     degrees of freedom =     2795
-
-    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
- Pr(T < t) = 0.0000         Pr(|T| > |t|) = 0.0000          Pr(T > t) = 1.0000
 
 
 *AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= MIRAR COMO EXPORTAR LA TABLA
