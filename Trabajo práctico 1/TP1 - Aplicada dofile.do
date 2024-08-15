@@ -9,7 +9,7 @@
 clear // Limpia la memoria para comenzar con un entorno limpio
 
 * Define las rutas principales para facilitar la carga y guardado de archivos
-global main "/Users/zowi/Documents/GitHub/Eco-Aplicada/PS1"
+global main "/Users/juanimorozumi/Documents/GitHub/Aplicada/Trabajo práctico 1/PS1"
 global input "$main/input"
 global output "$main/output"
 
@@ -102,7 +102,8 @@ foreach var of varlist * {
     }
 }
 
-/* 
+destring econrk powrnk resprk satlif satecc highsc belief monage cmedin hprblm hosl3m, replace 
+destring wtchng evalhl operat hattac alclmo waistc hhpres tincm_r geo work1 work2 ortho marsta1 marsta2 marsta3 marsta4 hipsiz2 totexpr2, replace
 3) Additional Data Cleaning
 ==============================================================================
 */
