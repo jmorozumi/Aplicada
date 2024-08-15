@@ -1,135 +1,132 @@
-*PROBLEM SET 1
+/******************************************************************************
+                            PROBLEM SET 1
+******************************************************************************/
 
-clear
-global main "/Users/juanimorozumi/Documents/GitHub/Aplicada/Trabajo práctico 1/PS1"
+/* 
+1) Set up environment
+==============================================================================
+*/
+clear // Limpia la memoria para comenzar con un entorno limpio
+
+* Define las rutas principales para facilitar la carga y guardado de archivos
+global main "/Users/zowi/Documents/GitHub/Eco-Aplicada/PS1"
 global input "$main/input"
 global output "$main/output"
 
-use "$input/data_russia.dta", clear
-*Para limpiar la base de datos vamos a ver que tipode formato tiene las variables
+* Carga la base de datos "data_russia.dta" desde la ruta definida
+use "$input/data_russia.dta", clear 
+
+* Explora la estructura y tipo de variables presentes en la base de datos
 describe
 
-preserve
+preserve // Guarda una copia temporal de la base para posibles restauraciones
 
-gen sex_limpia =.
-replace sex_limpia = 1 if sex=="female"
-replace sex_limpia = 0 if sex=="male"
-drop sex
+/* 
+2) Data cleaning
+==============================================================================
+*/
+* Creación de nuevas variables limpias para mayor claridad
+gen sex_limpia = .
+replace sex_limpia = 1 if sex == "female"
+replace sex_limpia = 0 if sex == "male"
+drop sex // Se elimina la variable original para evitar duplicados
 
-gen obese_limpia =.
-replace obese_limpia = 1 if obese=="This person is obese"
-replace obese_limpia = 0 if obese=="This person is not obese"
+gen obese_limpia = .
+replace obese_limpia = 1 if obese == "This person is obese"
+replace obese_limpia = 0 if obese == "This person is not obese"
 drop obese
 
-gen smokes_limpia =.
-replace smokes_limpia = 1 if smokes=="Smokes"
-replace smokes_limpia = 0 if smokes=="0"
+gen smokes_limpia = .
+replace smokes_limpia = 1 if smokes == "Smokes"
+replace smokes_limpia = 0 if smokes == "0"
 drop smokes
 
-split hipsiz, parse("circumference ")
-drop hipsiz1
-drop hipsiz
+* Limpieza y conversión de variables numéricas
+split hipsiz, parse("circumference ") // Divide "hipsiz" en múltiples variables
+drop hipsiz1 hipsiz
 replace hipsiz2 = "" if hipsiz2 == ","
 replace hipsiz2 = subinstr(hipsiz2, ",", ".", .)
 
 split totexpr, parse("expenditures ")
-drop totexpr1
-drop totexpr
+drop totexpr1 totexpr
 replace totexpr2 = "" if totexpr2 == ","
 replace totexpr2 = subinstr(totexpr2, ",", ".", .)
 
 replace tincm_r = "" if tincm_r == ","
 replace tincm_r = subinstr(tincm_r, ",", ".", .)
 
-
+* Tabulación y conversión de valores para variables categóricas
 foreach var of varlist econrk powrnk resprk satlif geo wtchng evalhl operat {
-tab `var'
+    tab `var'
 }
 
-*
+* Conversión de valores categóricos de texto a numérico
 foreach var of varlist econrk powrnk resprk satlif geo {
-replace `var' = "." if `var' == ".b"
-replace `var' = "." if `var' == ".d"
-replace `var' = "." if `var' == ".c"
-replace `var' = "1" if `var' == "one"
-replace `var' = "2" if `var' == "two"
-replace `var' = "3" if `var' == "three"
-replace `var' = "4" if `var' == "four"
-replace `var' = "5" if `var' == "five"
+    replace `var' = "." if inlist(`var', ".b", ".d", ".c")
+    replace `var' = "1" if `var' == "one"
+    replace `var' = "2" if `var' == "two"
+    replace `var' = "3" if `var' == "three"
+    replace `var' = "4" if `var' == "four"
+    replace `var' = "5" if `var' == "five"
 }
 
 foreach var of varlist wtchng evalhl operat {
-replace `var' = "." if `var' == ".b"
-replace `var' = "." if `var' == ".d"
-replace `var' = "." if `var' == ".c"
-replace `var' = "1" if `var' == "one"
-replace `var' = "2" if `var' == "two"
-replace `var' = "3" if `var' == "three"
-replace `var' = "4" if `var' == "four"
-replace `var' = "5" if `var' == "five"
+    replace `var' = "." if inlist(`var', ".b", ".d", ".c")
+    replace `var' = "1" if `var' == "one"
+    replace `var' = "2" if `var' == "two"
+    replace `var' = "3" if `var' == "three"
+    replace `var' = "4" if `var' == "four"
+    replace `var' = "5" if `var' == "five"
 }
 
 foreach var of varlist hattac htself {
-replace `var' = "." if `var' == ".b"
-replace `var' = "." if `var' == ".d"
-replace `var' = "." if `var' == ".c"
-replace `var' = "1" if `var' == "one"
-replace `var' = "2" if `var' == "two"
-replace `var' = "3" if `var' == "three"
-replace `var' = "4" if `var' == "four"
-replace `var' = "5" if `var' == "five"
+    replace `var' = "." if inlist(`var', ".b", ".d", ".c")
+    replace `var' = "1" if `var' == "one"
+    replace `var' = "2" if `var' == "two"
+    replace `var' = "3" if `var' == "three"
+    replace `var' = "4" if `var' == "four"
+    replace `var' = "5" if `var' == "five"
 }
 
+destring, replace // Convierte variables de string a numérico
 
-destring, replace
-
-*lista de las variables
+* Identificación de variables con valores faltantes
 ds
-* Calcula el porcentaje de valores faltantes para cada variable
-* Verifica si el porcentaje de valores faltantes es mayor al 5%
 foreach var of varlist * {
     count if missing(`var')
     local missing = r(N)
     local total = _N
     local percent_missing = 100 * `missing' / `total'
-	
     if `percent_missing' > 5 {
-        display "`var' tiene más del 5% de valores faltantes: " `percent_missing' "%"
+        display "`var' tiene más del 5% de valores faltantes: `percent_missing'%"
     }
 }
 
-*Este código hace lo siguiente:
-
-*ds: lista todas las variables en el dataset.
-*foreach var of varlist *: recorre cada variable en la lista de variables.
-*count if missing(\var')`: cuenta cuántos valores faltantes tiene la variable actual.
-*local missing = r(N): guarda el número de valores faltantes en una macro local.
-*local total = _N: guarda el número total de observaciones en otra macro local.
-*local percent_missing = 100 * \missing' / ⁠ total' ⁠: calcula el porcentaje de valores faltantes.
-*if \percent_missing' > 5`: verifica si el porcentaje es mayor al 5%.
-*display "var' tiene más del 5% de valores faltantes: " ⁠ percent_missing' "%" ⁠: muestra un mensaje si la variable tiene más del 5% de valores faltantes.*
-
-
-*Sacamoslos income negativos
-replace tincm_r = . if tincm_r<0
-replace totexpr2 = . if totexpr2<0
-
+/* 
+3) Additional Data Cleaning
+==============================================================================
+*/
+* Eliminar valores negativos y realizar ajustes adicionales
+replace tincm_r = . if tincm_r < 0
+replace totexpr2 = . if totexpr2 < 0
 replace totexpr2 = . if totexpr2 > tincm_r
 
-
-*4) 
- gsort totexpr2
- 
+* Ordenar y ajustar el dataset para análisis posterior
+gsort totexpr2
 order id site sex_limpia
 
-*5) Creamos una variable edad y le pedimos a Stata que tome los valores de "monage" y los divida por 12
+/* 
+4) Creating new variables
+==============================================================================
+*/
+* Crear una nueva variable de edad en años a partir de "monage"
+gen age = .
+replace age = monage / 12
 
-gen age=.
-replace age = monage/12
+* Resumir las principales variables de interés
+estpost summarize sex_limpia age satlif waistc hipsiz2 totexpr2, listwise
 
-estpost summarize sex_limpia age satlif waistc hipsiz2 totexpr2 , listwise
-
-*Cambiamos las etiquetas de las variables
+* Etiquetar variables para mayor claridad
 label var sex_limpia "Sexo"
 label var age "Edad (en años)"
 label var satlif "Satisfacción con la vida"
@@ -137,31 +134,39 @@ label var waistc "Circunferencia de la cintura"
 label var hipsiz2 "Circunferencia de la cadera"
 label var totexpr2 "Gasto real"
 
-
-* Exportamos la tabla
+/* 
+5) Exportar resultados
+==============================================================================
+*/
+* Exportar la tabla resumen en formato LaTeX
 esttab using "$output/tables/Table 1.tex", cells("Obs Mean Var Sd Min Max Sum")
 
-*6)
-*Definimos el estilo para el gráfico
- ssc install grstyle
-  grstyle clear
+/* 
+6) Generar gráficos y pruebas
+==============================================================================
+*/
+* Estilo del gráfico
+ssc install grstyle // Instalar paquete de estilos gráficos
+grstyle clear
+grstyle init 
+grstyle set horizontal
+grstyle color background white 
+grstyle color heading black
 
-. grstyle init 
-. grstyle set horizontal
-. grstyle color background white 
-. grstyle color heading black // Title in black
-. grstyle clear
+* Comparar distribuciones de circunferencia de cadera entre hombres y mujeres
+twoway (kdensity hipsiz if sex_limpia == 1) (kdensity hipsiz if sex_limpia == 0), ///
+    legend(order(1 "Women" 2 "Men")) title("Distribución de la circunferencia de las caderas") ///
+    ytitle("Densidad") xtitle("Circunferencia de las caderas")
 
-
-*Comparamos las distribuciones de la circunferencia de las caderas de hombres y mujeres.
-twoway (kdensity hipsiz if sex_limpia==1) (kdensity hipsiz if sex_limpia==0), legend(order(1 "Women" 2 "Men")) title("Distribución de la circunferencia de las caderas") ytitle("Densidad") xtitle("Circunferencia de las caderas")
-
+* Guardar gráfico
 graph save "Graph" "/Users/juanimorozumi/Documents/GitHub/Aplicada/Trabajo práctico 1/PS1\output\grapichs\Gráfico punto 6.gph"
 
-*6.b)
+* Prueba t para comparar medias de circunferencia de cadera
 ttest hipsiz, by(sex_limpia)
 
 
 
 *AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= MIRAR COMO EXPORTAR LA TABLA
+
+
 
