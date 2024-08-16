@@ -165,7 +165,6 @@ ttest hipsiz, by(sex_limpia)
 
 * Exportamos la tabla del T test realizado previamente
 esttab using "$output/tables/Table 2.tex", replace
-*AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= MIRAR COMO EXPORTAR LA TABLA
 
 
 
