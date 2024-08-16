@@ -102,9 +102,7 @@ foreach var of varlist * {
     }
 }
 
-destring econrk powrnk resprk satlif satecc highsc belief monage cmedin hprblm hosl3m, replace 
-destring wtchng evalhl operat hattac alclmo waistc hhpres tincm_r geo work1 work2 ortho marsta1 marsta2 marsta3 marsta4 hipsiz2 totexpr2, replace
-3) Additional Data Cleaning
+* 3) Additional Data Cleaning
 ==============================================================================
 */
 * Eliminar valores negativos y realizar ajustes adicionales
@@ -139,8 +137,10 @@ label var totexpr2 "Gasto real"
 5) Exportar resultados
 ==============================================================================
 */
+* Creamos la carpeta a la que queremos redireccionar la tabla una vez que la pasemos al archivo
+mkdir "$output/tables"
 * Exportar la tabla resumen en formato LaTeX
-esttab using "$output/tables/Table 1.tex", cells("Obs Mean Var Sd Min Max Sum")
+esttab using "$output/tables/Table 1.tex", cells("Obs Mean Var Sd Min Max Sum") replace
 
 /* 
 6) Generar gráficos y pruebas
@@ -155,18 +155,16 @@ grstyle color background white
 grstyle color heading black
 
 * Comparar distribuciones de circunferencia de cadera entre hombres y mujeres
-twoway (kdensity hipsiz if sex_limpia == 1) (kdensity hipsiz if sex_limpia == 0), ///
-    legend(order(1 "Women" 2 "Men")) title("Distribución de la circunferencia de las caderas") ///
-    ytitle("Densidad") xtitle("Circunferencia de las caderas")
+twoway (kdensity hipsiz if sex_limpia == 1) (kdensity hipsiz if sex_limpia == 0), legend(order(1 "Women" 2 "Men")) title("Distribución de la circunferencia de las caderas") ytitle("Densidad") xtitle("Circunferencia de las caderas")
 
 * Guardar gráfico
-graph save "Graph" "/Users/juanimorozumi/Documents/GitHub/Aplicada/Trabajo práctico 1/PS1\output\grapichs\Gráfico punto 6.gph"
+graph save "Graph" "/Users/juanimorozumi/Documents/GitHub/Aplicada/Trabajo práctico 1/PS1\output\grapichs\Gráfico punto 6.gph", replace
 
 * Prueba t para comparar medias de circunferencia de cadera
 ttest hipsiz, by(sex_limpia)
 
-
-
+* Exportamos la tabla del T test realizado previamente
+esttab using "$output/tables/Table 2.tex", replace
 *AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= MIRAR COMO EXPORTAR LA TABLA
 
 
