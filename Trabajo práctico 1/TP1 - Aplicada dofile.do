@@ -79,7 +79,7 @@ foreach var of varlist wtchng evalhl operat {
     replace `var' = "5" if `var' == "five"
 }
 
-foreach var of varlist hattac htself {
+foreach var of varlist hattac {
     replace `var' = "." if inlist(`var', ".b", ".d", ".c")
     replace `var' = "1" if `var' == "one"
     replace `var' = "2" if `var' == "two"
@@ -87,6 +87,8 @@ foreach var of varlist hattac htself {
     replace `var' = "4" if `var' == "four"
     replace `var' = "5" if `var' == "five"
 }
+
+replace htself = . if htself == .b
 
 destring, replace // Convierte variables de string a numérico
 
@@ -104,7 +106,7 @@ foreach var of varlist * {
 
 * 3) Additional Data Cleaning
 ==============================================================================
-*/
+
 * Eliminar valores negativos y realizar ajustes adicionales
 replace tincm_r = . if tincm_r < 0
 replace totexpr2 = . if totexpr2 < 0
@@ -157,14 +159,19 @@ grstyle color heading black
 * Comparar distribuciones de circunferencia de cadera entre hombres y mujeres
 twoway (kdensity hipsiz if sex_limpia == 1) (kdensity hipsiz if sex_limpia == 0), legend(order(1 "Women" 2 "Men")) title("Distribución de la circunferencia de las caderas") ytitle("Densidad") xtitle("Circunferencia de las caderas")
 
-* Guardar gráfico
-graph save "Graph" "/Users/juanimorozumi/Documents/GitHub/Aplicada/Trabajo práctico 1/PS1\output\grapichs\Gráfico punto 6.gph", replace
+* Creamos la carpeta a la que queremos redireccionar la tabla una vez que la pasemos al archivo
+mkdir "$output/graphics"
 
+* Guardar gráfico
+graph save "$output/graphics/Grafico 6.jpg", replace
 * Prueba t para comparar medias de circunferencia de cadera
 ttest hipsiz, by(sex_limpia)
 
 * Exportamos la tabla del T test realizado previamente
 esttab using "$output/tables/Table 2.tex", replace
 
-
+/* 
+7) Generar gráficos y pruebas
+==============================================================================
+*/
 
